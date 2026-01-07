@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+import dbInit
 app = Flask(__name__)
 
 @app.route("/")
@@ -11,3 +12,5 @@ def about():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+dbInit.InitDatabase()
