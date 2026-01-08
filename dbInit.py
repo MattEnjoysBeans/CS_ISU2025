@@ -21,21 +21,43 @@ def initDatabase():
             UserId INTEGER PRIMARY KEY,
             Username TEXT NOT NULL UNIQUE,
             Password TEXT NOT NULL UNIQUE,
-            Email TEXT UNIQUE,
+            Email TEXT UNIQUE
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tabPref (
             TpID INTEGER PRIMARY KEY,
-            UserID FOREIGN KEY,
+            UserID FOREIGN KEY
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS YTPref (
             VidpID INTEGER PRIMARY KEY,
+            UserID FOREIGN KEY
+        );
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Tsaved (
             UserID FOREIGN KEY,
+            Url_1 TEXT,
+            Url_2 TEXT,
+            Url_3 TEXT,
+            Url_4 TEXT,
+            Url_5 TEXT, 
+        );
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS YTsaved (
+            UserID FOREIGN KEY,
+            Url_1 TEXT,
+            Url_2 TEXT,
+            Url_3 TEXT,
+            Url_4 TEXT,
+            Url_5 TEXT, 
         );
     """)
     cursor.commit()
