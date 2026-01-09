@@ -18,48 +18,42 @@ def initDatabase():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS user (
-            UserId INTEGER PRIMARY KEY,
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Username TEXT NOT NULL UNIQUE,
-            Password TEXT NOT NULL UNIQUE,
-            Email TEXT UNIQUE
+            Password_Hash TEXT NOT NULL,
+            Email TEXT UNIQUE,
+            Created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tabPref (
             TpID INTEGER PRIMARY KEY,
-            UserID FOREIGN KEY
+            UserID INTEGER,
+            FOREIGN KEY (UserID) REFERENCES user(Id)
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS YTPref (
             VidpID INTEGER PRIMARY KEY,
-            UserID FOREIGN KEY
+            UserID INTEGER,
+            FOREIGN KEY (UserID) REFERENCES user(Id)
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Tsaved (
-            UserID FOREIGN KEY,
-            Url_1 TEXT,
-            Url_2 TEXT,
-            Url_3 TEXT,
-            Url_4 TEXT,
-            Url_5 TEXT, 
+            UserID INTEGER,
+            FOREIGN KEY (UserID) REFERENCES user(Id)
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS YTsaved (
-            UserID FOREIGN KEY,
-            Url_1 TEXT,
-            Url_2 TEXT,
-            Url_3 TEXT,
-            Url_4 TEXT,
-            Url_5 TEXT, 
+            UserID INTEGER,
+            FOREIGN KEY (UserID) REFERENCES user(Id)
         );
     """)
-    cursor.commit()
-    cursor.close()
+    connection.commit()
     connection.close()
