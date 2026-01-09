@@ -1,7 +1,7 @@
 import sqlite3
 from werkzeug.security import generate_password_hash
 
-def create_user(username, password):
+def create_user(username, password, email):
     password_hash = generate_password_hash(password)
 
     try:
@@ -9,8 +9,8 @@ def create_user(username, password):
         connection.row_factory = sqlite3.Row
 
         connection.execute(
-            "INSERT INTO user (Username, Password_Hash) VALUES (?, ?)",
-            (username, password_hash)
+            "INSERT INTO user (Username, Password_Hash, Email) VALUES (?, ?, ?)",
+            (username, password_hash, email)
         )
         connection.commit()
         connection.close()
