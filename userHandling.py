@@ -5,7 +5,7 @@ def create_user(username, password, email):
     password_hash = generate_password_hash(password)
 
     try:
-        connection = connection = sqlite3.connect("database.db")
+        connection = sqlite3.connect("database.db")
         connection.row_factory = sqlite3.Row
 
         connection.execute(
@@ -19,8 +19,23 @@ def create_user(username, password, email):
     except sqlite3.IntegrityError:
         return False
 
+def get_user_by_login(login):
+    connection = sqlite3.connect("database.db")
+    connection.row_factory = sqlite3.Row
+    user = connection.execute(
+        """
+        SELECT * FROM user
+        WHERE username = ?
+           OR email = ?
+        """,
+        (login, login)
+    ).fetchone()
+    connection.close()
+    return user
+
 def delete_user(Id):
     connection = sqlite3.connect("database.db")
+    connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
     cursor.execute(
@@ -34,3 +49,5 @@ def delete_user(Id):
 
     return rows_deleted > 0
 
+for i in range(0):
+    kill = delete_user(input("Id: "))
