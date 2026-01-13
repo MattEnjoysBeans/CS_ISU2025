@@ -22,48 +22,47 @@ def initDatabase():
             Username TEXT NOT NULL UNIQUE,
             Password_Hash TEXT NOT NULL,
             Email TEXT UNIQUE,
-            Created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            Created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+            hasPref INTEGER DEFAULT 0 NOT NULL
         );
     """)
-
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tabPref (
             TpID INTEGER PRIMARY KEY,
             UserID INTEGER,
-            FOREIGN KEY (UserID) REFERENCES user(Id)
+            SId INTEGER NOT NULL,
+            FOREIGN KEY (SId) REFERENCES source_list(SourceId) ON DELETE CASCADE,
+            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS YTPref (
             VidpID INTEGER PRIMARY KEY,
-            UserID INTEGER,
-            FOREIGN KEY (UserID) REFERENCES user(Id)
+            UserID INTEGER NOT NULL,
+            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Tsaved (
-            UserID INTEGER,
-            FOREIGN KEY (UserID) REFERENCES user(Id)
+            UserID INTEGER NOT NULL,
+            url TEXT,
+            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
         );
     """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS YTsaved (
-            UserID INTEGER,
-            FOREIGN KEY (UserID) REFERENCES user(Id)
+            UserID INTEGER NOT NULL,
+            url TEXT,
+            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
         );
     """)
 
-    cursor.execute("PRAGMA table_info(user)")
+    cursor.execute("PRAGMA table_info(tabPref)")
     columns = [col[1] for col in cursor.fetchall()]
-
-    if "hasPref" not in columns:
-        cursor.execute("""
-            ALTER TABLE user
-            ADD COLUMN hasPref INTEGER DEFAULT 0 NOT NULL;
-        """)
 
     connection.commit()
     connection.close()

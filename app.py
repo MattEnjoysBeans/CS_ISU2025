@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import dbInit
 import userHandling
 app = Flask(__name__)
-app.secret_key = "charizard"
+app.secret_key = "charizar"
 
 @app.route("/")
 def index():
@@ -15,13 +15,13 @@ def index():
     cursor = connection.cursor()
     user_id = session.get("user_id")
     if cursor.execute("""SELECT hasPref FROM user WHERE Id = ?""", (user_id,)):
-        return redirect("/about")
+        return redirect("/prefs")
 
     return render_template("home.html")
 
-@app.route("/about")
+@app.route("/prefs")
 def about():
-    return render_template("about.html")
+    return render_template("prefs.html")
 
 @app.route("/login")
 def login():
@@ -74,8 +74,32 @@ def delete_account():
     session.clear()
     return redirect("/")
 
+@app.route("/submit", methods=["GET", "POST"])
+def submit():
+    if request.method == "POST":
+        items = request.form.getlist("items[]")
+
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+
+        for item in items:
+            if item.strip():
+                cursor.execute(
+                    "INSERT INTO source_list (user_Id, url) VALUES (?, ?)",
+                    (session["user_id"], item.strip(),)
+                )
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("submit"))
+
+    return render_template("prefs.html")
+
 if __name__ == "__main__":
     dbInit.initDatabase()
     app.run(debug=True)
+
+
 
 
