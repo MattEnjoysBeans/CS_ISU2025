@@ -22,9 +22,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/about">About</a>
-                    </li>
                 </ul>
             </div>
             <form method="POST" action="/logout">
@@ -39,7 +36,7 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Enter Items</h4>
 
-                <form method="POST">
+                <form method="POST" action="/submit">
                     <div id="input-list">
                         <div class="input-group mb-2">
                             <input type="text" name="items[]" class="form-control" placeholder="Enter item">
