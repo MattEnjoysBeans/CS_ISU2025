@@ -12,7 +12,9 @@ def initDatabase():
         CREATE TABLE IF NOT EXISTS source_list (
             SourceId INTEGER PRIMARY KEY AUTOINCREMENT,
             SourceName TEXT NOT NULL,
-            Url TEXT NOT NULL UNIQUE
+            Url TEXT NOT NULL,
+            UserID INTEGER,
+            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
         );
     """)
 

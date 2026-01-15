@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, flash, session, abort
+from urllib.parse import urlparse
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import dbInit
 import userHandling
 app = Flask(__name__)
-app.secret_key = "charizar"
+app.secret_key = "charizard"
 
 @app.route("/")
 def index():
@@ -14,14 +15,23 @@ def index():
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
     user_id = session.get("user_id")
-    if cursor.execute("""SELECT hasPref FROM user WHERE Id = ?""", (user_id,)):
+    cursor.execute("""SELECT hasPref FROM user WHERE Id = (?)""", (session["user_id"],))
+    result = cursor.fetchone
+
+    if result == 0:
         return redirect("/prefs")
 
     return render_template("home.html")
 
 @app.route("/prefs")
-def about():
-    return render_template("prefs.html")
+def prefs():
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+    connection.row_factory = sqlite3.Row
+    sources = connection.execute(
+        "SELECT SourceId, SourceName FROM source_list WHERE UserID = (?)", (session["user_id"],)).fetchall()
+    connection.close()
+    return render_template("prefs.html", sources=sources)
 
 @app.route("/login")
 def login():
@@ -82,19 +92,59 @@ def submit():
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
 
+        cursor.execute("""SELECT hasPref FROM user WHERE Id = (?)""", (session["user_id"],))
+        resultskip = cursor.fetchone
+
+        if resultskip == 1 and not items:
+            connection.commit()
+            connection.close()
+            return redirect("/")
+
         for item in items:
             if item.strip():
+                urlRaw = item
+                parsedUrl = urlparse(urlRaw)
+                sourceName = parsedUrl.netloc
+
                 cursor.execute(
-                    "INSERT INTO source_list (user_Id, url) VALUES (?, ?)",
-                    (session["user_id"], item.strip(),)
+                    "INSERT INTO source_list (url, SourceName, UserID) VALUES (?, ?, ?)",
+                    (item.strip(), sourceName, session["user_id"],)
+                )
+                cursor.execute(
+                    "SELECT * FROM source_list WHERE UserId = (?)",
+                    (session["user_id"],)
                 )
 
-        connection.commit()
-        connection.close()
+                result = cursor.fetchone()
 
-        return redirect(url_for("submit"))
+        if result:
+            cursor.execute(
+                "UPDATE user SET hasPref = 1 WHERE Id = (?)",
+                (session["user_id"],)
+            )
+            connection.commit()
+            connection.close()
+            return redirect("/")
+        else:
+            connection.commit()
+            connection.close()
+            return redirect("/prefs")
 
-    return render_template("prefs.html")
+    connection.commit()
+    connection.close()
+    return redirect("/prefs")
+
+@app.route("/clearpref", methods=["GET", "POST"])
+def clearpref():
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+    cursor.execute(
+        "DELETE FROM source_list WHERE UserID = ?",
+        (session["user_id"],)
+    )
+    connection.commit()
+    connection.close()
+    return redirect("/prefs")
 
 if __name__ == "__main__":
     dbInit.initDatabase()
