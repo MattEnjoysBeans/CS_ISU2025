@@ -4,6 +4,8 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import dbInit
 import userHandling
+import scraping
+import json
 app = Flask(__name__)
 app.secret_key = "charizard"
 
@@ -145,6 +147,27 @@ def clearpref():
     connection.commit()
     connection.close()
     return redirect("/prefs")
+
+@app.route("/search", methods=["GET"])
+def search():
+    if request.method == "GET":
+        userSearch = request.form["q"]
+
+        
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT SourceName FROM source_list WHERE UserId = (?)",
+                (session["user_id"],)
+            )
+        items = cursor.fetchall()
+        for item in items:
+            combinedSearch = userSearch + item
+            result = scraping.searchQuery(combinedSearch)
+
+
+
+        
 
 if __name__ == "__main__":
     dbInit.initDatabase()
