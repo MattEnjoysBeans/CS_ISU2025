@@ -16,9 +16,10 @@ def index():
     
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
+    connection.row_factory = sqlite3.Row
     user_id = session.get("user_id")
     cursor.execute("""SELECT hasPref FROM user WHERE Id = (?)""", (session["user_id"],))
-    result = cursor.fetchone
+    result = cursor.fetchone()
 
     if result == 0:
         return redirect("/prefs")
@@ -106,7 +107,10 @@ def submit():
             if item.strip():
                 urlRaw = item
                 parsedUrl = urlparse(urlRaw)
+                urlPath = parsedUrl.path
                 sourceName = parsedUrl.netloc
+                if sourceName == "www.youtube.com":
+                    sourceName += urlPath
 
                 cursor.execute(
                     "INSERT INTO source_list (url, SourceName, UserID) VALUES (?, ?, ?)",
@@ -144,6 +148,10 @@ def clearpref():
         "DELETE FROM source_list WHERE UserID = ?",
         (session["user_id"],)
     )
+    cursor.execute(
+        "UPDATE user SET hasPref = 0 WHERE Id = (?)",
+        (session["user_id"],)
+    )
     connection.commit()
     connection.close()
     return redirect("/prefs")
@@ -151,20 +159,25 @@ def clearpref():
 @app.route("/search", methods=["GET"])
 def search():
     if request.method == "GET":
-        userSearch = request.form["q"]
-
-        
+        userSearch = request.args.get("q", "")
+        print(userSearch)
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
+        connection.row_factory = sqlite3.Row
         cursor.execute(
             "SELECT SourceName FROM source_list WHERE UserId = (?)",
                 (session["user_id"],)
             )
         items = cursor.fetchall()
+        connection.close()
+        print(items)
+        results = []
         for item in items:
-            combinedSearch = userSearch + item
+            combinedSearch = str(userSearch) + " tab " + str(item)
             result = scraping.searchQuery(combinedSearch)
-
+            results.append(result)
+        print(results)
+        return render_template("results.html", results=results)
 
 
         

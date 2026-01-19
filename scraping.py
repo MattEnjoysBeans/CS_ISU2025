@@ -1,6 +1,7 @@
 import requests
+import json
 
-def searchQuery(arg)
+def searchQuery(arg):
     url = "https://google.serper.dev/search"
 
     payload = {
@@ -12,5 +13,8 @@ def searchQuery(arg)
     }
 
     response = requests.request("POST", url, headers=headers, json=payload)
-
-    return response
+    searchResults = response.json()
+    for result in searchResults.get("organic", []):
+        resultTitle = result.get("title")
+        resultLink = result.get("link")
+        return [resultTitle, resultLink]
