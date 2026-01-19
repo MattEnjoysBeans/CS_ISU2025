@@ -179,8 +179,25 @@ def search():
         print(results)
         return render_template("results.html", results=results)
 
+@app.route("/favourite", methods=["POST"])
+def favourite():
+    result = request.form.get("result")
+    is_favourite = "favourite" in request.form
 
-        
+    print(result)
+    connection = sqlite3.connect("database.db")
+    cursor = connection.cursor()
+    connection.row_factory = sqlite3.Row
+    cursor.execute("""
+        INSERT INTO Tsaved (UserID, url, IsFav)
+        VALUES (?, ?, ?)
+        ON CONFLICT(UserID, url)
+        DO UPDATE SET IsFavourite = excluded.IsFavourite
+    """, (session["user_id"], result, is_favourite))
+
+    connection.commit()
+    connection.close()
+    return redirect(request.referrer)
 
 if __name__ == "__main__":
     dbInit.initDatabase()
