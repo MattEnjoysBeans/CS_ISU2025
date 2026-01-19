@@ -28,38 +28,14 @@ def initDatabase():
             hasPref INTEGER DEFAULT 0 NOT NULL
         );
     """)
-    
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tabPref (
-            TpID INTEGER PRIMARY KEY,
-            UserID INTEGER,
-            SId INTEGER NOT NULL,
-            FOREIGN KEY (SId) REFERENCES source_list(SourceId) ON DELETE CASCADE,
-            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
-        );
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS YTPref (
-            VidpID INTEGER PRIMARY KEY,
-            UserID INTEGER NOT NULL,
-            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
-        );
-    """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Tsaved (
-            UserID INTEGER NOT NULL,
+            UserID INTEGER NOT NULL ,
             url TEXT,
-            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
-        );
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS YTsaved (
-            UserID INTEGER NOT NULL,
-            url TEXT,
-            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE
+            IsFav BOOLEAN,
+            FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE,
+            UNIQUE(UserID, url)
         );
     """)
 
