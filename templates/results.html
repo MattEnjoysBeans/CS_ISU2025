@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Preferences</title>
+    <title>Results</title>
 
 
     <link
@@ -15,7 +15,7 @@
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">Matthew's ICS4U Project</a>
+            <a class="navbar-brand" href="/">Tabla-Search</a>
 
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
@@ -24,6 +24,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/prefs">Preferences</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/saved">Saved</a>
                     </li>
                 </ul>
             </div>
@@ -40,15 +43,13 @@
         {% for i in range(results|length) %}
             <li class="list-group-item">
                 <a href="{{ results[i][1] }}" >{{ results[i][0] }}</a><br>
-                <form method="POST" action="/favourite">
-                    <input type="hidden" name="result" value="{{ results[i] }}">
-                    <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="favourite" id="fav_{{ results[i] }}" value="1" {% if results[i] %} checked {% endif %}>
-                    <label class="form-check-label" for="fav_{{ results[i] }}">
-                        Favourite
-                    </label>
-                    </div>
-                </form>
+                <div class="container mt-2">
+                    <form method="GET" action="/favourite">
+                        <input type="hidden" name="resultlink" value="{{ results[i][1] }}">
+                        <input type="hidden" name="resultname" value="{{ results[i][0] }}">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </form>
+                </div>
             </li>
         {% else %}
             <li class="list-group-item text-muted">
@@ -61,10 +62,10 @@
         </div>
        
 
-    <!-- tag -->
+    <!-- Footer -->
     <footer class="bg-light text-center mt-5 py-3">
         <small class="text-muted">
-            © 2025 Matthew's ICS4U Project
+            © 2026 Tabla-Search
         </small>
     </footer>
 

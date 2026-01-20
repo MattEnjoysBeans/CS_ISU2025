@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Preferences</title>
+    <title>Saved</title>
 
 
     <link
@@ -15,63 +15,43 @@
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">Matthew's ICS4U Project</a>
+            <a class="navbar-brand" href="/">Tabla-Search</a>
 
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/prefs">Preferences</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/saved">Saved</a>
+                    </li>
                 </ul>
             </div>
             <form method="POST" action="/logout">
-                <button type="link" style="float:right">Logout</button>
+                <button class="btn btn-danger" type="link" style="float:right">Logout</button>
             </form>
         </div>
     </nav>
 
-    <!--dynamic list inputs for source links-->
-    <div class="container mt-5">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Enter Items</h4>
-
-                <form method="POST" action="/submit">
-                    <div id="input-list">
-                        <div class="input-group mb-2">
-                            <input type="text" name="items[]" class="form-control" placeholder="Enter item">
-                            <button type="button" class="btn btn-danger remove-btn">Remove</button>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary mb-3" id="add-btn">
-                        + Add another
-                    </button>
-
-                    <div>
-                        <button type="submit" class="btn btn-primary">
-                            Submit
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!--Show preferences to user and clear all button-->
+        <!--Show favourites to user and clear all button-->
         <div class="container mt-3">
-            <div class="card-title">Current Preferred Websites</div>
+            <div class="card-title">Saved Tablatures</div>
         <ul class="list-group">
-        {% for source in sources %}
+        {% for item in saved %}
             <li class="list-group-item">
-                {{ source.SourceName }}
+                <a href="{{ item[0] }}">{{ item[1] }}</a>
             </li>
         {% else %}
             <li class="list-group-item text-muted">
-                No sources found.
+                No URL's Saved.
             </li>
         {% endfor %}
         </ul>
         <div class="container mt-1">
-            <form method="POST" action="/clearpref">
+            <form method="POST" action="/clearfav">
                 <button type="submit" class="btn btn-danger">Clear List</button>
             </form>
         </div>
@@ -79,34 +59,12 @@
     </div>
         </div>
        
-    <!--dynamic list movement using javascript-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+   
 
-    <script>
-        const inputList = document.getElementById("input-list");
-        const addBtn = document.getElementById("add-btn");
-
-        addBtn.addEventListener("click", () => {
-            const div = document.createElement("div");
-            div.className = "input-group mb-2";
-            div.innerHTML = `
-                <input type="text" name="items[]" class="form-control" placeholder="Enter item">
-                <button type="button" class="btn btn-danger remove-btn">Remove</button>
-            `;
-            inputList.appendChild(div);
-        });
-
-        inputList.addEventListener("click", (e) => {
-            if (e.target.classList.contains("remove-btn")) {
-                e.target.parentElement.remove();
-            }
-        });
-    </script>
-
-    <!-- tag -->
+    <!-- Footer -->
     <footer class="bg-light text-center mt-5 py-3">
         <small class="text-muted">
-            © 2025 Matthew's ICS4U Project
+            © 2026 Tabla-Search
         </small>
     </footer>
 

@@ -33,10 +33,21 @@ def initDatabase():
         CREATE TABLE IF NOT EXISTS Tsaved (
             UserID INTEGER NOT NULL ,
             url TEXT,
+            urlName TEXT,
             IsFav BOOLEAN,
             FOREIGN KEY (UserID) REFERENCES user(Id) ON DELETE CASCADE,
             UNIQUE(UserID, url)
         );
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS remember_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT NOT NULL,
+        expires_at DATETIME NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES user(Id) ON DELETE CASCADE
+    );
     """)
 
     cursor.execute("PRAGMA table_info(tabPref)")
